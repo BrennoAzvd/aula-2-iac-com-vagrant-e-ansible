@@ -15,15 +15,39 @@
       tags:
         - packages
 
-    - name: Copia a página web para o diretório do Nginx
-      copy:
-        src: files/
+    # --- tasks ---
+
+    #- name: Copia a página web para o diretório do Nginx
+    #  copy:
+    #    src: files/
+    #    dest: /var/www/html
+    #    owner: www-data
+    #    group: www-data
+    #    mode: '0644'
+     # notify:
+     #   - Reiniciar Nginx
+
+    - name: Copia e processa o template
+      template:
+        src: files/index.html.j2
         dest: /var/www/html
         owner: www-data
         group: www-data
         mode: '0644'
+      vars:
+        texto_dinamico: "Esta página foi gerada a partir do módulo template do Ansible."
+        texto_strong: "Mensagem do dia :"
+        conteudo_dinamico: "Cuidado com o Demogorgon! (Módulo template)"
       notify:
         - Reiniciar Nginx
+
+    - name: Copia a pasta de assets (CSS, JS, imagens)
+      copy:
+        src: files/assets
+        dest: /var/www/html/
+        owner: www-data
+        group: www-data
+
 
   handlers:
     - name: Reiniciar Nginx
